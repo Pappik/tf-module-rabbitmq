@@ -21,36 +21,27 @@ resource "aws_security_group" "rabbitmq" {
   tags = merge(local.common_tags, { Name = "${var.env}-rabbitmq_security_group"} )
 }
 
-resource "aws_mq_configuration" "example" {
+resource "aws_mq_configuration" "rabbitmq" {
   description    = "${var.env}-rabbitmq"
   name           = "${var.env}-rabbitmq"
   engine_type    = var.engine_type
-  engine_version = "5.17.6"
+  engine_version = var.engine_version
 
-  data = <<DATA
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<broker xmlns="http://activemq.apache.org/schema/core">
-  <plugins>
-    <forcePersistencyModeBrokerPlugin persistenceFlag="true"/>
-    <statisticsBrokerPlugin/>
-    <timeStampingBrokerPlugin ttlCeiling="86400000" zeroExpirationOverride="86400000"/>
-  </plugins>
-</broker>
-DATA
+  data = ""
 }
 
-resource "aws_mq_broker" "example" {
+resource "aws_mq_broker" "rabbitmq" {
   broker_name = "${var.env}-rabbitmq"
 
   configuration {
-    id       = aws_mq_configuration.test.id
-    revision = aws_mq_configuration.test.latest_revision
+    id       = aws_mq_configuration.rabbitmq.id
+    revision = aws_mq_configuration.rabbitmq.latest_revision
   }
 
-  engine_type        = "ActiveMQ"
-  engine_version     = "5.17.6"
+  engine_type    = var.engine_type
+  engine_version = var.engine_version
   host_instance_type = "mq.t2.micro"
-  security_groups    = [aws_security_group.test.id]
+  security_groups    = [aws_security_group.rabbitmq.id]
 
   user {
     username = "ExampleUser"
