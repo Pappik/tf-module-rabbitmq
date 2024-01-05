@@ -35,7 +35,7 @@ resource "aws_mq_broker" "rabbitmq" {
   deployment_mode = "SINGLE_INSTANCE"
   engine_type    = var.engine_type
   engine_version = var.engine_version
-  host_instance_type = "mq.t2.micro"
+  host_instance_type = "mq.t3.micro"
   security_groups    = [aws_security_group.rabbitmq.id]
   subnet_ids =var.deployment_mode == "SINGLE_INSTANCE" ? [var.subnet_ids[0]] : var.subnet_ids
 
