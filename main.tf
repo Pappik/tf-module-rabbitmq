@@ -21,30 +21,33 @@ resource "aws_security_group" "rabbitmq" {
   tags = merge(local.common_tags, { Name = "${var.env}-rabbitmq_security_group"} )
 }
 
-resource "aws_mq_configuration" "rabbitmq" {
-  description    = "${var.env}-rabbitmq"
-  name           = "${var.env}-rabbitmq"
-  engine_type    = var.engine_type
-  engine_version = var.engine_version
-
-  data = ""
-}
+#resource "aws_mq_configuration" "rabbitmq" {
+#  description    = "${var.env}-rabbitmq"
+#  name           = "${var.env}-rabbitmq"
+#  engine_type    = var.engine_type
+#  engine_version = var.engine_version
+#
+#  data = ""
+#}
 
 resource "aws_mq_broker" "rabbitmq" {
   broker_name = "${var.env}-rabbitmq"
-
-  configuration {
-    id       = aws_mq_configuration.rabbitmq.id
-    revision = aws_mq_configuration.rabbitmq.latest_revision
-  }
-
+  deployment_mode = "SINGLE_INSTANCE"
   engine_type    = var.engine_type
   engine_version = var.engine_version
   host_instance_type = "mq.t2.micro"
   security_groups    = [aws_security_group.rabbitmq.id]
+  subnet_ids =var.deployment_mode == "SINGLE_INSTANCE" ? [var.subnet_ids[0]] : var.subnet_ids
+
+#  configuration {
+#    id       = aws_mq_configuration.rabbitmq.id
+#    revision = aws_mq_configuration.rabbitmq.latest_revision
+#  }
+
+
 
   user {
-    username = "ExampleUser"
-    password = "MindTheGap"
+    username = data.aws_ssm_parameter.USER.value
+    password = data.aws_ssm_parameter.PASS.value
   }
 }
