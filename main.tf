@@ -142,6 +142,6 @@ resource "aws_route53_record" "rabbitmq" {
   zone_id = "Z01783243D3S1K1FW0QID"
   name    = "rabbitmq-${var.env}.pappik.online"
   type    = "A"
-  ttl     = 300
+  ttl     = 30
   records = [aws_spot_instance_request.rabbitmq.private_ip]
 }
