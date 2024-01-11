@@ -51,3 +51,9 @@ resource "aws_mq_broker" "rabbitmq" {
     password = data.aws_ssm_parameter.PASS.value
   }
 }
+
+resource "aws_ssm_parameter" "rabbitmq_endpoint" {
+  name  = "${var.env}.rabbitmq_endpoint"
+  type  = "String"
+  value = aws_mq_broker.rabbitmq.instances.0.endpoints.0
+}
